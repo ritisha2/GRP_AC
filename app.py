@@ -112,9 +112,15 @@ st.markdown("""
 # Data Loader
 @st.cache_data
 def load_data():
-    prod_path = "production_clean.csv"
-    orange_path = "quality_clean.csv"
-    eval_path = "evaluation_clean.csv"
+    def get_csv_path(filename):
+        for path in [os.path.join("data", filename), filename, os.path.join(os.path.dirname(__file__), "data", filename)]:
+            if os.path.exists(path):
+                return path
+        return filename
+
+    prod_path = get_csv_path("production_clean.csv")
+    orange_path = get_csv_path("quality_clean.csv")
+    eval_path = get_csv_path("evaluation_clean.csv")
     
     df_prod = pd.read_csv(prod_path) if os.path.exists(prod_path) else pd.DataFrame()
     df_orange = pd.read_csv(orange_path) if os.path.exists(orange_path) else pd.DataFrame()

@@ -180,41 +180,52 @@ GRP_AC/
 ├── .gitignore                      # Git exclusion rules
 ├── requirements.txt                # Python environment dependencies
 ├── README.md                       # Complete start-to-end technical guide
+├── app.py                          # Streamlit interactive EDA & model dashboard
+├── predict_terminal.py             # Terminal CLI for batch lookups & manual inference
 │
-├── data/ (CSV files)
+├── data/                           # Sanitized & Raw CSV Data
 │   ├── production_clean.csv        # Sanitized autoclave telemetry (143 batches)
 │   ├── quality_clean.csv           # Cleaned 11-target laboratory quality results
 │   ├── evaluation_clean.csv        # Merged dataset used for ML evaluation
 │   ├── production_data.csv         # Raw telemetry backup
-│   └── quality_evaluation_data.csv # Raw lab results backup
+│   ├── orange_quality_data.csv     # Raw laboratory target data backup
+│   └── quality_evaluation_data.csv # Raw lab evaluation criteria backup
 │
-├── models/                         # Serialized model binaries
+├── development/                    # Core Pipeline & Model Development Scripts
+│   ├── clean_data.py               # Data cleaning & set-point decontamination
+│   ├── eda_analysis.py             # Statistical EDA & plot generation script
+│   ├── export_csvs.py              # Raw extraction script
+│   ├── train_all_quality_models.py # Physics feature engineering & 11-model training
+│   └── train_ash_cb.py             # Ash% & Carbon Black specialized training
+│
+├── docs/                           # In-Depth Engineering & Methodology Guides
+│   ├── ml_methodology_flow_sequence.md             # Complete step-by-step ML pipeline flow
+│   ├── project_granular_progress_and_outputs_summary.md # Granular phase-by-phase summary
+│   ├── golden_batch_prediction_guide.md           # Golden batch specifications & grading rules
+│   ├── models_architecture_and_accuracy_guide.md  # Detailed model architectures & residual analysis
+│   ├── strategies_to_achieve_99_percent_accuracy.md# Scientific roadmap to 99%+ accuracy
+│   ├── poc_data_sufficiency_and_accuracy_report.md# Proof of Concept validation report
+│   ├── eda_and_cleaning_summary.md                # Data cleaning methodology report
+│   ├── eda_table_and_formulas_guide.md            # Feature formulas & mapping guide
+│   └── references_and_sources.md                  # Literature citations & ASTM standards
+│
+├── models/                         # Serialized Model Binaries & Preprocessors
 │   ├── all_quality_models.pkl      # The 11 trained scikit-learn models bundle
 │   ├── feature_cols.pkl            # Trained feature column alignment
 │   ├── imputer.pkl                 # Missing value median imputer
 │   ├── model_ash.pkl               # Dedicated Ash% model checkpoint
 │   └── model_cb.pkl                # Dedicated Carbon Black% model checkpoint
 │
-├── eda_plots/                      # Generated exploratory analysis graphs
-│   ├── 01_quality_distributions.png
-│   ├── 02_production_distributions.png
-│   ├── 06_correlation_heatmap.png
-│   └── 07_production_multicollinearity.png
-│
-├── scripts & execution
-│   ├── clean_data.py               # Data cleaning & set-point decontamination
-│   ├── eda_analysis.py             # Statistical EDA & plot generation script
-│   ├── train_all_quality_models.py # Physics feature engineering & 11-model training
-│   ├── predict_terminal.py         # Terminal interactive CLI for batch predictions
-│   └── app.py                      # Interactive Streamlit dashboard
-│
-└── guides & documentation/
-    ├── ml_methodology_flow_sequence.md             # Deep-dive ML flowchart sequence
-    ├── project_granular_progress_and_outputs_summary.md # Granular phase-by-phase summary
-    ├── golden_batch_prediction_guide.md           # Golden batch specifications guide
-    ├── models_architecture_and_accuracy_guide.md  # Detailed architecture & algorithms
-    ├── strategies_to_achieve_99_percent_accuracy.md# Roadmap to 99% accuracy
-    └── poc_data_sufficiency_and_accuracy_report.md# Proof of Concept validation report
+└── eda_plots/                      # Generated Exploratory Analysis Visualizations
+    ├── 01_quality_distributions.png
+    ├── 02_production_distributions.png
+    ├── 03_quality_by_shift.png
+    ├── 04_quality_by_supervisor.png
+    ├── 05_quality_by_customer.png
+    ├── 06_correlation_heatmap.png
+    ├── 07_production_multicollinearity.png
+    ├── 08_target_intercorrelation.png
+    └── 09_success_analysis.png
 ```
 
 ---
@@ -266,7 +277,7 @@ Open `http://localhost:8501` in your browser.
 ### C. Re-training Models
 To re-run feature engineering, model tuning, and re-serialize the models bundle:
 ```bash
-python train_all_quality_models.py
+python development/train_all_quality_models.py
 ```
 
 ---

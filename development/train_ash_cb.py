@@ -28,10 +28,30 @@ import pandas as pd
 import numpy as np
 import pickle
 import os
+import sys
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
+def find_file(rel_path):
+    candidates = [
+        rel_path,
+        os.path.join("data", rel_path),
+        os.path.join("..", "data", rel_path),
+        os.path.join(os.path.dirname(__file__), "..", "data", rel_path),
+        os.path.join(os.path.dirname(__file__), rel_path),
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return rel_path
 
 # ─────────────────────────────────────────────────────────────
 # 1. Load Data
@@ -40,8 +60,8 @@ print("=" * 70)
 print("  STEP 1: Loading production_clean.csv & quality_clean.csv")
 print("=" * 70)
 
-prod = pd.read_csv("production_clean.csv")
-qual = pd.read_csv("quality_clean.csv")
+prod = pd.read_csv(find_file("production_clean.csv"))
+qual = pd.read_csv(find_file("quality_clean.csv"))
 
 print(f"  Production shape : {prod.shape}")
 print(f"  Quality shape    : {qual.shape}")
@@ -222,28 +242,29 @@ print("\n" + "=" * 70)
 print("  STEP 6: Saving Models & Artifacts to models/")
 print("=" * 70)
 
-os.makedirs("models", exist_ok=True)
+models_dir = "models" if os.path.isdir("models") else os.path.join(os.path.dirname(__file__), "..", "models")
+os.makedirs(models_dir, exist_ok=True)
 
-with open("models/model_ash.pkl", "wb") as f:
+with open(os.path.join(models_dir, "model_ash.pkl"), "wb") as f:
     pickle.dump(model_ash, f)
-with open("models/model_cb.pkl", "wb") as f:
+with open(os.path.join(models_dir, "model_cb.pkl"), "wb") as f:
     pickle.dump(model_cb, f)
-with open("models/imputer.pkl", "wb") as f:
+with open(os.path.join(models_dir, "imputer.pkl"), "wb") as f:
     pickle.dump(imputer, f)
-with open("models/feature_cols.pkl", "wb") as f:
+with open(os.path.join(models_dir, "feature_cols.pkl"), "wb") as f:
     pickle.dump(feature_cols, f)
 
 user_cols_info = {
     "user_available_cols": USER_AVAILABLE_NUMERIC_COLS
 }
-with open("models/user_cols_info.pkl", "wb") as f:
+with open(os.path.join(models_dir, "user_cols_info.pkl"), "wb") as f:
     pickle.dump(user_cols_info, f)
 
-print("  ✅ models/model_ash.pkl       saved")
-print("  ✅ models/model_cb.pkl        saved")
-print("  ✅ models/imputer.pkl         saved")
-print("  ✅ models/feature_cols.pkl    saved")
-print("  ✅ models/user_cols_info.pkl  saved")
+print(f"  ✅ {os.path.join(models_dir, 'model_ash.pkl')} saved")
+print(f"  ✅ {os.path.join(models_dir, 'model_cb.pkl')} saved")
+print(f"  ✅ {os.path.join(models_dir, 'imputer.pkl')} saved")
+print(f"  ✅ {os.path.join(models_dir, 'feature_cols.pkl')} saved")
+print(f"  ✅ {os.path.join(models_dir, 'user_cols_info.pkl')} saved")
 
 print("\n" + "=" * 70)
 print("  SUMMARY")

@@ -8,7 +8,7 @@ import numpy as np
 import re
 import os
 
-OUTPUT_DIR = r"e:\GRP-AC"
+OUTPUT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data"))
 
 def parse_duration_to_minutes(val):
     """Convert HH:MM or HH:MM:SS strings to numeric minutes."""

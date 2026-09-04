@@ -18,10 +18,19 @@ Usage:
     $env:PYTHONIOENCODING='utf-8'; python predict_terminal.py
 """
 
+import sys
 import pandas as pd
 import numpy as np
 import pickle
 import os
+
+# Enable UTF-8 console output on Windows
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 
 # ─────────────────────────────────────────────────────────────
 # 1. Load Saved Models & Datasets
@@ -30,18 +39,32 @@ print("=" * 75)
 print("  Loading trained 11-Model Suite & Datasets from models/ ...")
 print("=" * 75)
 
-with open("models/all_quality_models.pkl", "rb") as f:
+def find_file(rel_path):
+    candidates = [
+        rel_path,
+        os.path.join("data", rel_path),
+        os.path.join("models", rel_path),
+        os.path.join(os.path.dirname(__file__), rel_path),
+        os.path.join(os.path.dirname(__file__), "data", rel_path),
+        os.path.join(os.path.dirname(__file__), "models", rel_path),
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return rel_path
+
+with open(find_file("all_quality_models.pkl"), "rb") as f:
     models_dict = pickle.load(f)
-with open("models/imputer.pkl", "rb") as f:
+with open(find_file("imputer.pkl"), "rb") as f:
     imputer = pickle.load(f)
-with open("models/feature_cols.pkl", "rb") as f:
+with open(find_file("feature_cols.pkl"), "rb") as f:
     feature_cols = pickle.load(f)
 
 # Load clean production and quality datasets for Batch Lookup Mode
-prod_df = pd.read_csv("production_clean.csv")
-qual_df = pd.read_csv("quality_clean.csv")
+prod_df = pd.read_csv(find_file("production_clean.csv"))
+qual_df = pd.read_csv(find_file("quality_clean.csv"))
 
-print("  ✅ All 11 Models & Preprocessors loaded successfully.\n")
+print("  ✅ All 11 Models & Datasets loaded successfully.\n")
 
 # Order of target display
 TARGET_ORDER = [

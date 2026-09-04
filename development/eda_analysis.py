@@ -13,8 +13,9 @@ import os
 import warnings
 warnings.filterwarnings('ignore')
 
-OUTPUT_DIR = r"e:\GRP-AC"
-PLOT_DIR = os.path.join(OUTPUT_DIR, "eda_plots")
+PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+OUTPUT_DIR = os.path.join(PROJECT_DIR, "data")
+PLOT_DIR = os.path.join(PROJECT_DIR, "eda_plots")
 os.makedirs(PLOT_DIR, exist_ok=True)
 
 # Set clean white background style & padding
